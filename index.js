@@ -18,7 +18,7 @@ import pino from 'pino';
 import config from './config.js';
 import store from './lib/lightweight_store.js';
 import SaveCreds from './lib/session.js';
-import { server, PORT } from './lib/server.js';
+const PORT = config.port || 3000;
 import { printLog } from './lib/print.js';
 import { writeErrorLog } from './lib/logger.js';
 import { handleMessages, handleGroupParticipantUpdate, handleStatus, handleCall } from './lib/messageHandler.js';
@@ -253,26 +253,124 @@ app.use(express.urlencoded({ extended: true }));
 const runningBots = new Map();
 
 app.get('/', (req, res) => {
-    res.send(`<html><head><title>M-RIZWAN-MD Pair</title><style>body{background:#0e0e0e;color:#fff;font-family:sans-serif;text-align:center;padding:40px}input,button{padding:12px;margin:10px;border-radius:8px;border:none;width:300px}button{background:#25D366;color:#fff;cursor:pointer;font-weight:bold}</style></head><body><h1>🤖 M-RIZWAN-MD WEB PAIR</h1><p>Number with country code likho</p><form action="/pair" method="POST"><input type="text" name="number" placeholder="923436259742" required><br><button type="submit">Get Pairing Code</button></form></body></html>`);
-});
+    res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-RIZWAN-MD | Pairing</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    :root { --primary: #25d366; --secondary: #00d9f5; --bg: #0a0f1e; --card: rgba(18, 25, 43, 0.6); }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+        background: radial-gradient(ellipse at top,#1e293b 0%,var(--bg) 70%);
+        color:#fff;font-family:'Inter',system-ui,sans-serif;
+        display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;overflow:hidden
+    }
+    .glow{
+        position:absolute;width:600px;height:600px;
+        background:radial-gradient(circle,rgba(37,211,102,.2) 0%,transparent 70%);
+        filter:blur(100px);z-index:0;animation:pulse 4s ease-in-out infinite
+    }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    .container{
+        background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+        border:1px solid rgba(255,255,255,.1);padding:40px;border-radius:28px;text-align:center;
+        width:100%;max-width:450px;box-shadow:0 25px 70px rgba(0,0,0,.6);z-index:1;position:relative;
+        animation:fadeIn .8s ease
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .badge{
+        display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.15);
+        color:var(--primary);padding:8px 16px;border-radius:50px;font-size:.8rem;font-weight:800;
+        margin-bottom:25px;border:1px solid rgba(37,211,102,.3)
+    }
+    .dot{width:8px;height:8px;background:var(--primary);border-radius:50%;box-shadow:0 0 12px var(--primary);animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    h1{
+        font-size:2.2rem;font-weight:900;background:linear-gradient(90deg,var(--primary),var(--secondary));
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;letter-spacing:1px
+    }
+    .desc{color:#94a3b8;margin-bottom:30px;font-size:.95rem}
+    .input-group{position:relative;margin-bottom:20px}
+    input{
+        width:100%;padding:16px 16px 16px 50px;border-radius:14px;border:2px solid rgba(255,255,255,.1);
+        background:rgba(0,0,0,.25);color:#fff;outline:none;font-size:16px;transition:.3s
+    }
+    input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,211,102,.1)}
+    .icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#64748b;font-size:20px}
+    button{
+        width:100%;padding:16px;background:linear-gradient(90deg,var(--primary),var(--secondary));
+        border:none;border-radius:14px;color:#000;font-weight:900;font-size:17px;cursor:pointer;
+        transition:.3s;box-shadow:0 10px 30px rgba(37,211,102,.3)
+    }
+    button:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(37,211,102,.4)}
+    button:active{transform:translateY(0)}
+    .footer{margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1)}
+    .links{display:flex;gap:12px;justify-content:center}
+    .links a{
+        flex:1;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);
+        color:var(--primary);text-decoration:none;font-weight:700;font-size:14px;
+        transition:.3s;border:1px solid rgba(255,255,255,.1)
+    }
+    .links a:hover{background:rgba(37,211,102,.1);transform:translateY(-2px)}
+    .credit{margin-top:20px;font-size:11px;color:#475569;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="container">
+    <div class="badge"><span class="dot"></span> SYSTEM ONLINE</div>
+    <h1>M-RIZWAN-MD</h1>
+    <p class="desc">WhatsApp number with country code likho bina + ke</p>
+    
+    <form action="/pair" method="POST">
+        <div class="input-group">
+            <span class="icon">📱</span>
+            <input type="number" name="number" placeholder="923436259742" required>
+        </div>
+        <button type="submit">⚡ Get Pairing Code</button>
+    </form>
+    
+    <div class="footer">
+        <div class="links">
+            <a href="https://wa.me/923436259742" target="_blank">📞 Contact</a>
+            <a href="https://whatsapp.com/channel/0029Vb4Jh4wHgZWirfaYva0H" target="_blank">📢 Channel</a>
+        </div>
+    </div>
+    <div class="credit">POWERED BY M RIZWAN • V6.0.0</div>
+</div>
+</body></html>
+`);
 
 app.post('/pair', async (req, res) => {
     const number = req.body.number.replace(/[^0-9]/g, '');
     if(!number || number.length < 10) return res.send('❌ Sahi number likho');
     if(runningBots.has(number)) return res.send(`✅ ${number} already connected hai.`);
-    res.send(`⏳ ${number} ke liye code bana raha hu... Railway Logs check karo`);
+    res.send(`<center style="padding:100px"><h2>⏳ Code Generate ho raha hai...</h2><p>5 second ruko</p></center>`);
     try {
         const sock = await startBot({ number });
         runningBots.set(number, sock);
         if (!sock.authState.creds.registered) {
             await delay(2000);
             const code = await sock.requestPairingCode(number);
-            printLog('success', `Code for ${number}: ${code}`);
+const formattedCode = code?.match(/.{1,4}/g)?.join("-");
+res.send(`
+<center style="padding:100px;font-family:system-ui">
+<h1>✅ Pairing Code</h1>
+<div style="font-size:60px;color:#25D366;letter-spacing:8px;font-weight:bold;margin:20px 0">${formattedCode}</div>
+<p>WhatsApp > 3 Dots > Linked Devices > Link with Phone Number</p>
+<p style="color:#ef4444">⚠️ Code 20 sec me expire ho jayega</p>
+<a href="/" style="color:#25d366">← Wapis jao</a>
+</center>
+`);
         }
         sock.ev.on('connection.update', (u) => {
             if(u.connection === 'open'){ printLog('success', `✅ ${number} Connect ho gaya!`); }
         });
-    } catch(e){ printLog('error', `Error: ${e.message}`); }
+    } catch(e){ res.send(`<center style="padding:100px"><h1>❌ Error</h1><p>${e.message}</p><a href="/">Wapis jao</a></center>`); }
 });
 
 app.listen(PORT, () => printLog('success', `🌐 Web Pair Server running on port ${PORT}`));
@@ -338,15 +436,4 @@ process.on('unhandledRejection', (err) => {
   printLog('error', `Unhandled Rejection: ${err.message}`); 
   console.error(err.stack); 
   writeErrorLog({ type: 'unhandledRejection', error: err.message, stack: err.stack, timestamp: new Date().toISOString() }); 
-});
-
-server.on('error', (error) => { 
-  if (error.code === 'EADDRINUSE') { 
-    printLog('error', `Address localhost:${PORT} in use`); 
-    writeErrorLog({ type: 'serverError', error: `Address localhost:${PORT} in use`, timestamp: new Date().toISOString() }); 
-    server.close(); 
-  } else { 
-    printLog('error', `Server error: ${error.message}`); 
-    writeErrorLog({ type: 'serverError', error: error.message, stack: error.stack, timestamp: new Date().toISOString() }); 
-  } 
 });
