@@ -26,7 +26,7 @@ import commandHandler from './lib/commandHandler.js';
 
 // === YE FUNCTION TUMHARA PURA BOT HAI AB ===
 export async function startBot({ number }) {
-    const phoneNumber = number || config.pairingNumber || config.ownerNumber || "923436259742";
+    const phoneNumber = number || config.pairingNumber || config.ownerNumber || "";
 
     store.readFromFile();
     setInterval(() => store.writeToFile(), config.storeWriteInterval || 10000);
@@ -239,10 +239,12 @@ export async function startBot({ number }) {
     return await startQasimDev().catch((error) => { printLog('error', `Fatal error: ${error.message}`); if (rl &&!rlClosed) rl.close(); process.exit(1); });
 } // <--- FUNCTION CLOSE
 
-// === START BOT DIRECT ===
+// ISKO COMMENT KAR DO
+/*
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     startBot({}).catch((error) => { printLog('error', `Fatal error: ${error.message}`); process.exit(1); });
 }
+*/
 
 // === WEB PAIR SERVER ===
 const app = express();
