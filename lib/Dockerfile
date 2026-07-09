@@ -1,4 +1,4 @@
-FROM quay.io/qasimtech/m-rizwan-md:latest
+FROM node:20-slim
 
 WORKDIR /root/m-rizwan-md
 
