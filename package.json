@@ -23,13 +23,11 @@
     "test:unit": "vitest run test/unit",
     "test:integration": "vitest run test/integration",
     "test:watch": "vitest",
-    "audit": "npm audit --omit=dev",
-    "telegram": "node telegram.js"
+    "audit": "npm audit --omit=dev"
   },
   "keywords": [
     "whatsapp-bot",
     "baileys-bot",
-    "m-rizwan-Md",
     "m-rizwan-Md",
     "multi-device",
     "nodejs-bot",
@@ -68,7 +66,6 @@
     "mumaker": "^2.0.0",
     "mysql2": "^3.16.0",
     "node-cache": "^5.1.2",
-    "node-telegram-bot-api": "^0.64.0",
     "node-webpmux": "^3.1.0",
     "pg": "^8.16.3",
     "qrcode": "^1.5.4",
@@ -88,4 +85,4 @@
     "minimatch": "^10.2.1",
     "yargs-parser": "^21.1.1"
   }
-}
+  }
