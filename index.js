@@ -312,15 +312,23 @@ app.post('/code', async (req, res) => {
     const number = req.body.number?.replace(/\D/g, '');
     if(!number || number.length < 10) return res.json({ error: "Valid number daalo" });
     try {
-        const sock = await startBot({ number });
-        await delay(2000);
-        const code = await sock.requestPairingCode(number);
-        res.json({ code });
-        sock.ev.on('connection.update', (u) => {
-            if(u.connection === 'open'){
-                printLog('success', `✅ ${number} Web se connect ho gaya`);
-            }
+        const { state, saveCreds } = await useMultiFileAuthState(`./session/${number}`);
+        const { version } = await fetchLatestBaileysVersion();
+        
+        const sock = makeWASocket({
+            version,
+            logger: pino({ level: 'silent' }),
+            auth: { creds: state.creds, keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })) },
+            browser: Browsers.macOS('Chrome'),
         });
+
+        sock.ev.on('creds.update', saveCreds);
+        await delay(1500);
+        const code = await sock.requestPairingCode(number);
+        
+        res.json({ code });
+        
+        setTimeout(() => sock.ws.close(), 5000); // 5 sec baad band kar do
     } catch(e){
         res.json({ error: e.message });
     }
